@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Plataforma Divertida</title>
+    <style>
+        body {
+            background: linear-gradient(120deg, #ffe9e3 40%, #ffd0ed 100%);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            text-align: center;
+        }
+        .login-container, .conteudo {
+            margin: 48px auto 0 auto;
+            background: #fff9ee;
+            padding: 30px 18px 24px 18px;
+            width: 90%;
+            max-width: 328px;
+            border-radius: 36px;
+            box-shadow: 0 4px 20px #ffd88088;
+        }
+        input {
+            font-size: 22px;
+            border-radius: 18px;
+            border: 1.5px solid #ffa836;
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 18px;
+        }
+        button.menu-btn {
+            background: #ffa836;
+            color: #fff;
+            font-size: 20px;
+            padding: 9px 0;
+            border: none;
+            border-radius: 16px;
+            width: 23%;
+            cursor: pointer;
+            margin: 0 1% 10px 1%;
+        }
+        button.menu-btn.active {
+            background: #ff92be;
+            color: #7c326b;
+        }
+        .boasvindas { font-size: 27px; margin-bottom: 17px;}
+        .container-jogos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 590px;
+            margin: 28px auto;
+        }
+        .game {
+            background: #fff9ee;
+            padding: 24px 8px 20px 8px;
+            border-radius: 36px;
+            box-shadow: 0 4px 16px #ffd88099;
+            margin-bottom: 18px;
+        }
+        .jogo-btn {
+            background: #ffb5d6;
+            color: #7c326b;
+            font-size: 22px;
+            padding: 12px 0;
+            border: none;
+            border-radius: 22px;
+            margin: 11px 0 0 0;
+            width: 93%;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .jogo-btn:hover {
+            background: #ffe5f0;
+            color: #c95fa3;
+        }
+        .resp {
+            font-size: 21px;
+            font-weight: bold;
+            height: 32px;
+            margin-top: 10px;
+        }
+        h2 { font-size: 22px; margin-bottom: 14px;}
+        .emoji {
+            font-size: 42px;
+        }
+        @media (max-width: 700px) {
+            .container-jogos { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="loginDiv">
+        <h1>Entrar na Plataforma</h1>
+        <label for="nome">Digite seu nome:</label><br>
+        <input type="text" id="nome" maxlength="12" autocomplete="off"><br>
+        <button onclick="entrar()">Entrar</button>
+    </div>
+    <div class="conteudo hidden" id="plataforma">
+        <div class="boasvindas" id="boasVindas"></div>
+        <div>
+            <button class="menu-btn active" id="btn-ex1" onclick="selecionarMenu(1)">1</button>
+            <button class="menu-btn" id="btn-ex2" onclick="selecionarMenu(2)">2</button>
+            <button class="menu-btn" id="btn-ex3" onclick="selecionarMenu(3)"> 3</button>
+            <button class="menu-btn" id="btn-ex4" onclick="selecionarMenu(4)">4</button>
+        </div>
+        <div class="container-jogos" id="containerJogos"></div>
+    </div>
+    <script>
+        // Dados dos exercícios
+        const conjuntos = [
+            [
+                { emoji: '🐶', pergunta: 'Que animal faz "au au"?', opcoes: ['Cachorro', 'Gato'], certo: 0 },
+                { emoji: '🍌', pergunta: 'Qual fruta é amarela?', opcoes: ['Banana', 'Maçã'], certo: 0 },
+                { emoji: '✏️', pergunta: 'Para desenhar, uso?', opcoes: ['Lápis', 'Bola'], certo: 0 },
+                { emoji: '☁️', pergunta: 'Qual desses é azul?', opcoes: ['Céu', 'Grama'], certo: 0 },
+            ],
+            [
+                { emoji: '🐱', pergunta: 'Que animal faz "miau"?', opcoes: ['Gato', 'Cavalo'], certo: 0 },
+                { emoji: '🍎', pergunta: 'Qual fruta é vermelha?', opcoes: ['Maçã', 'Melancia'], certo: 0 },
+                { emoji: '⚽', pergunta: 'Para jogar futebol, uso?', opcoes: ['Bola', 'Livro'], certo: 0 },
+                { emoji: '🌲', pergunta: 'Qual desses cresce na floresta?', opcoes: ['Árvore', 'Carro'], certo: 0 },
+            ],
+            [
+                { emoji: '🐦', pergunta: 'Que animal voa?', opcoes: ['Pássaro', 'Peixe'], certo: 0 },
+                { emoji: '🌻', pergunta: 'Qual desses é uma flor?', opcoes: ['Girassol', 'Cacto'], certo: 0 },
+                { emoji: '🍇', pergunta: 'Qual fruta é roxa?', opcoes: ['Uva', 'Limão'], certo: 0 },
+                { emoji: '🎩', pergunta: 'Qual destes uso na cabeça?', opcoes: ['Chapéu', 'Sapato'], certo: 0 },
+            ],
+            [
+                { emoji: '🦋', pergunta: 'Que animal tem asas coloridas?', opcoes: ['Borboleta', 'Tartaruga'], certo: 0 },
+                { emoji: '🥕', pergunta: 'Qual destes é laranja?', opcoes: ['Cenoura', 'Abobrinha'], certo: 0 },
+                { emoji: '🚲', pergunta: 'O que tem duas rodas?', opcoes: ['Bicicleta', 'Ônibus'], certo: 0 },
+                { emoji: '🍁', pergunta: 'O que cai das árvores no outono?', opcoes: ['Folha', 'Fio'], certo: 0 },
+            ]
+        ];
+        let nomeUser = "";
+        let menuAtivo = 1;
+
+        function entrar() {
+            var nome = document.getElementById("nome").value.trim();
+            if (nome.length > 0) {
+                nomeUser = nome;
+                document.getElementById("loginDiv").classList.add("hidden");
+                document.getElementById("plataforma").classList.remove("hidden");
+                document.getElementById("boasVindas").textContent = "Olá, " + nome + "!";
+                selecionarMenu(menuAtivo);
+            } else {
+                alert("Digite um nome!");
+            }
+        }
+
+        function selecionarMenu(num) {
+            menuAtivo = num;
+            for(let i=1;i<=4;i++) {
+                document.getElementById("btn-ex"+i).classList.remove("active");
+            }
+            document.getElementById("btn-ex"+num).classList.add("active");
+            renderizarJogos(conjuntos[num-1]);
+        }
+
+        function renderizarJogos(lista) {
+            const container = document.getElementById('containerJogos');
+            container.innerHTML = "";
+            lista.forEach(function(jogo, idx){
+                let bloco = document.createElement('div');
+                bloco.className = 'game';
+                bloco.innerHTML = `<div class='emoji'>${jogo.emoji}</div>
+                    <h2>${jogo.pergunta}</h2>
+                    <button class='jogo-btn' onclick='responder(${idx},true)'>${jogo.opcoes[0]}</button>
+                    <button class='jogo-btn' onclick='responder(${idx},false)'>${jogo.opcoes[1]}</button>
+                    <div class='resp' id='resp${idx}'></div>`;
+                container.appendChild(bloco);
+            });
+        }
+
+        function responder(jogo, certo) {
+            var r = document.getElementById('resp'+jogo);
+            if (certo) {
+                r.textContent = "Muito bem! 😀";
+                r.style.color = "#5dc36e";
+            } else {
+                r.textContent = "Tente de novo!";
+                r.style.color = "#e96161";
+            }
+        }
+    </script>
+</body>
+</html>
+
